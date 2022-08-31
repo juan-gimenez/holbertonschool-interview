@@ -1,51 +1,49 @@
 #!/usr/bin/python3
-"""N Queens Problem"""
-import sys as s
+"""program that solves the N queens problem."""
+from sys import argv, exit
 
 
-def cons(a, N: int):
-    """"""
-    tmp = []
-    for i in range(N):
-        for j in range(N):
-            for k, l in a:
-                if i == k or j == l or abs((j - l)/(k - i)) == 1:
-                    break
-            else:
-                tmp.append([i, j])
+if len(argv) != 2:
+    print("Usage: nqueens N")
+    exit(1)
 
-    return tmp
+N = argv[1]
 
+try:
+    N = int(N)
+except ValueError:
+    print("N must be a number")
+    exit(1)
 
-def check(a, tmp, col: int, N: int):
-    """i"""
-    if len(a) == N or len(tmp) < len(a):
-        return a
-    if len(a) == 0:
-        a.append([0, col])
-    # if len(tmp) == 0:
-    tmp = cons(a, N)
-    next_candidate = tmp[0]
-    if next_candidate in tmp:
-        a.append(next_candidate)
-        return check(a, tmp, col, N)
+if N < 4:
+    print("N must be at least 4")
+    exit(1)
+
+solution = []
 
 
-if __name__ == '__main__':
-    if len(s.argv) != 2:
-        print('Usage: nqueens N')
-        exit(1)
+def nqueens(row, N, solution):
+    """The program should print any possible solution"""
+    if (row == N):
+        print(solution)
+    else:
+        for col in range(N):
+            position = [row, col]
+            if validposition(solution, position):
+                solution.append(position)
+                nqueens(row + 1, N, solution)
+                solution.remove(position)
 
-    if not s.argv[1].isdigit():
-        print('N must be a number')
-        exit(1)
 
-    N = int(s.argv[1])
-    if N < 4:
-        print('N must be at least 4')
-        exit(1)
+def validposition(solution, position):
+    """validate horizontal and diagonal position of queens"""
+    for queen in solution:
+        if queen[1] == position[1]:
+            return False
+        if (queen[0] - queen[1]) == (position[0] - position[1]):
+            return False
+        if (queen[0] + queen[1]) == (position[0] + position[1]):
+            return False
+    return True
 
-    for i in range(N):
-        solution = check([], [], i, N)
-        if len(solution) == N:
-            print(solution)
+nqueens(0, N, solution)
